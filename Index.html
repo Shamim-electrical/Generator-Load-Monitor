@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Factory Generator Load Monitor</title>
+
+<style>
+
+body {
+    font-family: Arial;
+    background: #f2f2f2;
+    text-align: center;
+    padding: 20px;
+}
+
+.app {
+    background: white;
+    max-width: 430px;
+    margin: auto;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 4px 15px #aaa;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+input {
+    width: 90%;
+    padding: 12px;
+    margin: 7px;
+    font-size: 17px;
+    box-sizing: border-box;
+}
+
+button {
+    padding: 12px 25px;
+    margin: 8px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.result {
+    margin-top: 20px;
+    font-size: 19px;
+    font-weight: bold;
+    line-height: 1.9;
+}
+
+.meter-box {
+    width: 100%;
+    height: 35px;
+    background: #ddd;
+    border-radius: 20px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+#meter {
+    width: 0%;
+    height: 35px;
+    background: green;
+    border-radius: 20px;
+    transition: width 0.5s;
+}
+
+#level {
+    margin-top: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#datetime {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<h1>⚡ Generator Load Monitor</h1>
+
+<p><b>Total System Capacity: 1880 kW</b></p>
+
+<input type="number" id="current"
+placeholder="Current (A)">
+
+<input type="number" id="voltage"
+value="400"
+placeholder="Voltage (V)">
+
+<input type="number" id="pf"
+value="0.8"
+step="0.01"
+placeholder="Power Factor">
+
+<br>
+
+<button onclick="calculate()">Calculate</button>
+
+<button onclick="resetApp()">Reset</button>
+
+<div class="result" id="result">
+
+Load kW = 0.0 kW<br>
+Load kVA = 0.0 kVA<br>
+Load = 0.0%
+
+</div>
+
+<div class="meter-box">
+
+<div id="meter"></div>
+
+</div>
+
+<div id="level">
+⚪ NO DATA
+</div>
+
+<div id="datetime"></div>
+
+</div>
+
+
+<script>
+
+function calculate() {
+
+    let current =
+    Number(document.getElementById("current").value);
+
+    let voltage =
+    Number(document.getElementById("voltage").value);
+
+    let pf =
+    Number(document.getElementById("pf").value);
+
+
+    // Calculate kW
+
+    let kw =
+    (1.732 * voltage * current * pf) / 1000;
+
+
+    // Calculate kVA
+
+    let kva =
+    (1.732 * voltage * current) / 1000;
+
+
+    // Total capacity = 1880 kW
+
+    let loadPercent =
+    (kw / 1880) * 100;
+
+
+    document.getElementById("result").innerHTML =
+
+    "⚡ Load kW = " +
+    kw.toFixed(1) + " kW<br>" +
+
+    "📦 Load kVA = " +
+    kva.toFixed(1) + " kVA<br>" +
+
+    "📊 Load Percentage = " +
+    loadPercent.toFixed(1) + "%";
+
+
+    // Level Bar
+
+    let meter =
+    document.getElementById("meter");
+
+
+    meter.style.width =
+    Math.min(loadPercent, 100) + "%";
+
+
+    let level =
+    document.getElementById("level");
+
+
+    if (loadPercent < 70) {
+
+        meter.style.background = "green";
+
+        level.innerHTML =
+        "🟢 NORMAL LOAD";
+
+    }
+
+    else if (loadPercent < 85) {
+
+        meter.style.background = "orange";
+
+        level.innerHTML =
+        "🟡 WARNING LOAD";
+
+    }
+
+    else {
+
+        meter.style.background = "red";
+
+        level.innerHTML =
+        "🔴 HIGH LOAD";
+
+    }
+
+}
+
+
+function resetApp() {
+
+    document.getElementById("current").value = "";
+
+    document.getElementById("voltage").value = "400";
+
+    document.getElementById("pf").value = "0.8";
+
+    document.getElementById("result").innerHTML =
+
+    "Load kW = 0.0 kW<br>" +
+    "Load kVA = 0.0 kVA<br>" +
+    "Load = 0.0%";
+
+
+    document.getElementById("meter").style.width = "0%";
+
+    document.getElementById("level").innerHTML =
+    "⚪ NO DATA";
+
+}
+
+
+function showDateTime() {
+
+    let now = new Date();
+
+    document.getElementById("datetime").innerHTML =
+
+    "🕐 " + now.toLocaleString();
+
+}
+
+
+setInterval(showDateTime, 1000);
+
+showDateTime();
+
+</script>
+
+</body>
+
+</html>
